@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "module": "preserve",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+    "allowJs": true,
+     "isolatedModules": true
+
+   
+
+  },
+  
+}
