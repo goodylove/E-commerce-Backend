@@ -17,6 +17,7 @@ export async function handleEmailService({
   });
 
   if (error) {
+    console.log(error)
     throw new BadRequestError("Failed to send email");
   }
   return data
