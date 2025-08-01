@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  
 }
 
 datasource db {
@@ -28,15 +27,28 @@ enum OrderStatus {
 }
 
 model User {
-  id            String   @id @default(uuid())
-  name          String
-  email         String   @unique
-  password      String
-  role          Role     @default(USER)
-  isVerified    Boolean  @default(false)
-  verificationToken String?   
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id                String   @id @default(uuid())
+  name              String
+  email             String   @unique
+  password          String
+  role              Role     @default(USER)
+  isVerified        Boolean  @default(false)
 
-  
+  verificationToken String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  Token Token[]
+}
+
+model Token {
+  id           String   @id @default(uuid())
+  refreshToken String   @unique
+  ip     Boolean  @default(false)
+  user         User     @relation(fields: [userId], references: [id])
+  userId       String
+  isValid     Boolean @default(false)
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
