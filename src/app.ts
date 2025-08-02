@@ -15,12 +15,11 @@ import { swaggerConfig } from "./config/swagger";
 import AuthRouter from "./routes/auth.routes";
 
 
-const PORT = process.env.PORT || 5001;
 const app = express();
 
 // middleware
 
-app.use(cookieParser())
+app.use(cookieParser(process.env.JWT_SECRET))
 app.use(express.json())
 app.use(cors())
 
@@ -37,10 +36,6 @@ app.use(ErrorHandlerMiddleWare)
 
 
 
-const start = () => {
-    app.listen(PORT, () => console.log(`App is running  on port  ${PORT}`));
-};
 
-start();
 
 export default app 
