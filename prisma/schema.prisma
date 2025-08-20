@@ -27,28 +27,146 @@ enum OrderStatus {
 }
 
 model User {
-  id                String   @id @default(uuid())
-  name              String
-  email             String   @unique
-  password          String
-  role              Role     @default(USER)
-  isVerified        Boolean  @default(false)
+  id         String  @id @default(uuid())
+  name       String
+  email      String  @unique
+  password   String
+  role       Role    @default(USER)
+  isVerified Boolean @default(false)
 
   verificationToken String?
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
-  Token Token[]
+  Token    Token[]
+  Order    Order[]
+  Review   Review[]
+  CartItem CartItem[]
+  Address  Address[]
 }
 
 model Token {
   id           String   @id @default(uuid())
   refreshToken String   @unique
-  ip     Boolean  @default(false)
+  ip           Boolean  @default(false)
   user         User     @relation(fields: [userId], references: [id])
   userId       String
-  isValid     Boolean @default(false)
+  isValid      Boolean  @default(false)
   expiresAt    DateTime
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  description String
+  price       Float
+  stock       Int
+  imageUrl    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  categoryId String
+  brandId    String
+
+  category   Category    @relation(fields: [categoryId], references: [id])
+  brand      Brand       @relation(fields: [brandId], references: [id])
+  reviews    Review[]
+  orderItems OrderItem[]
+  cartItems  CartItem[]
+}
+
+model Brand {
+  id   String @id @default(uuid())
+  name String
+  slug String @unique
+
+  products Product[]
+}
+
+model Category {
+  id   String @id @default(uuid())
+  name String
+  slug String @unique
+
+  products Product[]
+}
+
+model Order {
+  id            String      @id @default(uuid())
+  userId        String
+  addressId     String
+  status        OrderStatus @default(PENDING)
+  totalAmount   Float
+  paymentStatus String      @default("unpaid")
+  paymentIntent String? // For Stripe reference
+  createdAt     DateTime    @default(now())
+
+  user    User        @relation(fields: [userId], references: [id])
+  address Address     @relation(fields: [addressId], references: [id])
+  items   OrderItem[]
+  Payment Payment[]
+}
+
+model OrderItem {
+  id        String @id @default(uuid())
+  orderId   String
+  productId String
+  quantity  Int
+  price     Float
+
+  order   Order   @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  rating    Int
+  comment   String?
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([userId, productId]) // One review per product per user
+}
+
+model CartItem {
+  id        String @id @default(uuid())
+  userId    String
+  productId String
+  quantity  Int    @default(1)
+
+  user    User    @relation(fields: [userId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model Address {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  street    String
+  city      String
+  state     String
+  country   String
+  zipCode   String
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+  Order     Order[]
+}
+
+model Payment {
+  id        String   @id @default(uuid())
+  orderId   String
+  stripeId  String
+  amount    Float
+  currency  String
+  status    String
+  createdAt DateTime @default(now())
+
+  order Order @relation(fields: [orderId], references: [id])
 }
