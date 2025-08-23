@@ -105,6 +105,8 @@ export async function loginServices({
   const payload = {
     role: user.role,
     userId: user.id,
+    name: user.name,
+    email: user.email
   };
 
   // check if there is a valid refresh token for this user
@@ -168,6 +170,8 @@ export async function refreshTokenServices(
   const payload = {
     userId: getRefreshToken.userId,
     role: getRefreshToken.user.role,
+    name: getRefreshToken.user.name,
+    email: getRefreshToken.user.email
   };
   const newRefreshToken = crypto.randomBytes(32).toString("hex");
 

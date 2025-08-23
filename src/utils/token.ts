@@ -2,8 +2,17 @@ import { Response } from "express";
 import { UserPayloadTypes } from "../../interface/auth";
 import jwt  from "jsonwebtoken";
 
-function createJwt({payload,refreshToken}:{payload:UserPayloadTypes,refreshToken?:string| null} ) {
-    const token = jwt.sign({payload,refreshToken}, process.env.JWT_SECRET, { expiresIn: '15m' });
+
+
+type JwtPayload = {
+    userId: string;
+    name: string;
+    email: string;
+    role: string;
+}
+
+function createJwt(payload: JwtPayload){
+    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '15m' });
     return token;
 
 }
@@ -14,10 +23,10 @@ function createJwt({payload,refreshToken}:{payload:UserPayloadTypes,refreshToken
     refreshToken
 }: {
     res: Response;
-    payload: UserPayloadTypes;
+    payload: JwtPayload
     refreshToken: string;
 }) {
-    const accessToken = createJwt({payload});
+    const accessToken = createJwt(payload);
    
     
     const oneDay = 1000 * 60 * 60 * 24;
