@@ -8,7 +8,7 @@ const customErr = {
     message :err.message || "Internal server error"
 }
 
-console.log(err)
+
  if ((err.code === 'P2002')) {
     customErr.message = 'Email already exist';
     customErr.statusCode = StatusCodes.BAD_REQUEST;

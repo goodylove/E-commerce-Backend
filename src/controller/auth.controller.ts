@@ -12,7 +12,7 @@ export async function RegisterController(req: Request, res: Response) {
 
   const user = await registerServices(req.body);
 
-  res.status(StatusCodes.CREATED).json({ user });
+  res.status(StatusCodes.CREATED).json({ user,message:"Please verify  your email with the token sent to your email" });
 }
 
 export async function VerifyTokenController(req: Request, res: Response) {

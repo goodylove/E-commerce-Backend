@@ -13,6 +13,8 @@ import { NotFound } from "./middleware/notFound";
 import { ErrorHandlerMiddleWare } from "./middleware/errorHandler";
 import { swaggerConfig } from "./config/swagger";
 import AuthRouter from "./routes/auth.routes";
+import BrandRoutes from "./routes/brand.routes";
+import Categories from "./routes/categroies.routes";
 
 
 const app = express();
@@ -30,6 +32,8 @@ app.get("/", (req, res) => {
     res.send("Keep building");
 });
 app.use("/api/v1/auth",AuthRouter)
+app.use("/api/v1/brands",BrandRoutes)
+app.use("/api/v1/categories", Categories)
 
 app.use(NotFound)
 app.use(ErrorHandlerMiddleWare)

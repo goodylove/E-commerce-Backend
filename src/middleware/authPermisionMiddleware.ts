@@ -10,3 +10,5 @@ function authPermissionMiddleware(...roles: string[]) {
     }
   
 }
+
+export default authPermissionMiddleware;
