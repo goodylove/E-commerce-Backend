@@ -13,14 +13,15 @@ import { NotFound } from "./middleware/notFound";
 import { ErrorHandlerMiddleWare } from "./middleware/errorHandler";
 import { swaggerConfig } from "./config/swagger";
 import AuthRouter from "./routes/auth.routes";
+import BrandRoutes from "./routes/brand.routes";
+import Categories from "./routes/categroies.routes";
 
 
-const PORT = process.env.PORT || 5001;
 const app = express();
 
 // middleware
 
-app.use(cookieParser())
+app.use(cookieParser(process.env.JWT_SECRET))
 app.use(express.json())
 app.use(cors())
 
@@ -31,16 +32,14 @@ app.get("/", (req, res) => {
     res.send("Keep building");
 });
 app.use("/api/v1/auth",AuthRouter)
+app.use("/api/v1/brands",BrandRoutes)
+app.use("/api/v1/categories", Categories)
 
 app.use(NotFound)
 app.use(ErrorHandlerMiddleWare)
 
 
 
-const start = () => {
-    app.listen(PORT, () => console.log(`App is running  on port  ${PORT}`));
-};
 
-start();
 
 export default app 

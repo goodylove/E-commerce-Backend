@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx watch ./src/app.ts",
+    "dev": "tsx watch ./src/server.ts",
     "build": "tsx",
     "start": "tsx ./src/app.ts",
-    "test": "jest --detectOpenHandles"
+    "test": "jest"
   },
   "keywords": [],
   "type": "module",
