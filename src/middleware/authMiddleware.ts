@@ -1,4 +1,4 @@
-import { NextFunction, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import Jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
 
@@ -7,9 +7,9 @@ import { attachCookiesToResponse } from "../utils/token";
 
 const prisma = new PrismaClient();
 
-async function authMiddleware(req: any, res: Response, next: NextFunction) {
-  const { accessToken, refreshToken } = req.cookies
-
+async function authMiddleware(req:any, res: Response, next: NextFunction) {
+  const { accessToken,refreshToken } = req.signedCookies
+    console.log(req.signedCookies)
   try {
     if (accessToken) {
       try {
@@ -38,6 +38,7 @@ async function authMiddleware(req: any, res: Response, next: NextFunction) {
     }
 
     if (!refreshToken) {
+      console.log("token")
       throw new unAuthenticated("Authentication is required");
     }
 

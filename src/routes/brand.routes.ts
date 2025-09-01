@@ -4,7 +4,7 @@ import authMiddleware from "../middleware/authMiddleware";
 import { BrandController } from "../controller/brand.controller";
  const BrandRoutes = Router()
 
- BrandRoutes.post("/",authMiddleware,authPermissionMiddleware("admin"),BrandController)
+ BrandRoutes.post("/",authMiddleware,authPermissionMiddleware("ADMIN"),BrandController)
 
 
 

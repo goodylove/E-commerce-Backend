@@ -5,7 +5,7 @@ import { CategoriesController } from "../controller/categorie.controller";
 
  const Categories = Router()
 
- Categories.post("/",authMiddleware,authPermissionMiddleware("admin"),CategoriesController)
+ Categories.post("/",authMiddleware,authPermissionMiddleware("ADMIN"),CategoriesController)
 
 
 
