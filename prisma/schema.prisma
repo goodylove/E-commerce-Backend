@@ -26,6 +26,12 @@ enum OrderStatus {
   CANCELLED
 }
 
+enum ProductStatus {
+  IN_STOCK
+  OUT_OF_STOCK
+ 
+}
+
 model User {
   id         String  @id @default(uuid())
   name       String
@@ -67,7 +73,7 @@ model Product {
   imageUrl    String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
+  status      ProductStatus  @default(IN_STOCK)
   categoryId String
   brandId    String
 
