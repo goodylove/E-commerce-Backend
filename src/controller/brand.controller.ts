@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes"
 import { BadRequestError } from "../errors/customerErrors"
 import { Response } from "express"
-import { CreateBrandService } from "../services/brand.service"
+import { CreateBrandService, getBrandServices, getBrandsServicesById } from "../services/brand.service"
 
 
 export const BrandController = async (req:any,res:Response) =>{
@@ -16,4 +16,21 @@ export const BrandController = async (req:any,res:Response) =>{
 
     res.status(200).json({message:"brand added successfully"})
 
+}
+
+export const getAllBrandServicesController = async(req,res)=>{
+
+ const allBrands = await getBrandServices()
+ res.status(200).json({message:'all brand list retrieved successfully',data:allBrands})
+}
+
+export const getAllBrandByIdServicesController = async(req,res)=>{
+    const {id} = req.params
+
+    if(!id){
+     throw new BadRequestError('Please the brand Id')
+    }
+
+ const singleIdBrands = await getBrandsServicesById(id)
+ res.status(200).json({message:'Brand retrieved successfully',data:singleIdBrands})
 }

@@ -11,11 +11,11 @@ const prisma = new PrismaClient()
 export const createProductServices = async(products)=>{
 
 const existingProduct = await prisma.product.findUnique({
-    where:{slug:products.slug}
+    where:{id:products.id}
 })    
 
 if(existingProduct){
-    throw new BadRequestError("Product already exist with this slug")
+    throw new BadRequestError("Product already exist with this id")
 }
 
 // Products must belong to an existing category and brand.
@@ -27,7 +27,7 @@ if(!categoryExist){
      throw new BadRequestError("Invalid category Id")
 }
 
-const slug = slugify(products.name, { lower: true, strict: true });
+// const slug = slugify(products.name, { lower: true, strict: true });
 
 
 }
