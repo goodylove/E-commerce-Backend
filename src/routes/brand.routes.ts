@@ -6,7 +6,7 @@ import { BrandController, getAllBrandByIdServicesController, getAllBrandServices
 
  BrandRoutes.post("/",authMiddleware,authPermissionMiddleware("ADMIN"),BrandController)
  BrandRoutes.get('/',authMiddleware, getAllBrandServicesController)
-  BrandRoutes.get('/:id',authMiddleware, getAllBrandByIdServicesController)
+BrandRoutes.get('/:id',authMiddleware, getAllBrandByIdServicesController)
 
 
 

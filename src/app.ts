@@ -16,6 +16,7 @@ import AuthRouter from "./routes/auth.routes";
 import BrandRoutes from "./routes/brand.routes";
 import Categories from "./routes/categroies.routes";
 import ProductRouter from "./routes/product.routes";
+import UserRoutes from "./routes/user.routes";
 
 
 const app = express();
@@ -36,6 +37,8 @@ app.use("/api/v1/auth",AuthRouter)
 app.use("/api/v1/brands",BrandRoutes)
 app.use("/api/v1/categories", Categories)
 app.use("/api/v1/products",ProductRouter)
+app.use('/api/v1/users',UserRoutes)
+
 
 app.use(NotFound)
 app.use(ErrorHandlerMiddleWare)
