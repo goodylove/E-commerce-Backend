@@ -10,6 +10,7 @@ import { handleEmailService } from "../config/email";
 import { VERIFICATION_EMAIL_TEMPLATE } from "../config/emailTemplate";
 import { attachCookiesToResponse } from "../utils/token";
 import { Response } from "express";
+import { generateToken } from "../utils/generateToken";
 
 const prisma = new PrismaClient();
 
@@ -25,9 +26,12 @@ export async function registerServices(user: RegisterTypes) {
   const salt = await bcrypt.genSalt(10);
   const hashPassword = await bcrypt.hash(user.password, salt);
 
-  const verificationToken = Math.floor(
-    10000 + Math.random() * 900000
-  ).toString();
+  // const verificationToken = Math.floor(
+  //   10000 + Math.random() * 900000
+  // ).toString();
+
+
+  const verificationToken = generateToken()
 
   const newUser = await prisma.user.create({
     data: {
@@ -58,7 +62,7 @@ export async function verifyUserTokenServices({
   token,
   email,
 }: VerifyUserTokenTypes) {
-  const user = await prisma.user.findUnique({ where: { email } });
+  const user = await prisma.user.findFirst({ where: { verificationToken: token } });
 
   if (!user) {
     throw new BadRequestError("No user found");
@@ -68,12 +72,23 @@ export async function verifyUserTokenServices({
     throw new BadRequestError("Invalid verification Token");
   }
 
+
+  let updateData: any = {
+    isVerified: true,
+    verificationToken: null
+  }
+
+  if (user.pendingEmail) {
+    updateData.email = user.pendingEmail,
+      updateData.pendingEmail = null
+  }
+
+
+
+
   await prisma.user.update({
     where: { email: user.email },
-    data: {
-      isVerified: true,
-      verificationToken: null,
-    },
+    data: updateData
   });
 }
 
@@ -111,39 +126,40 @@ export async function loginServices({
 
   // check if there is a valid refresh token for this user
   const existingToken = await prisma.token.findFirst({
-    where:{
-      userId:user.id,
-      expiresAt: {gt:new Date()}
+    where: {
+      userId: user.id,
+      expiresAt: { gt: new Date() }
     }
 
   })
   let refreshToken = existingToken?.refreshToken
 
-if(!refreshToken){
-   refreshToken = crypto.randomBytes(32).toString("hex");
-  await prisma.token.create({
-  data: {
-    refreshToken,
-    userId: user.id,
-    expiresAt: addDays(new Date(), 7),
-  },
-});
+  if (!refreshToken) {
+    refreshToken = crypto.randomBytes(32).toString("hex");
+    await prisma.token.create({
+      data: {
+        refreshToken,
+        userId: user.id,
+        expiresAt: addDays(new Date(), 7),
+      },
+    });
 
-}
+  }
 
 
 
- 
+
 
   attachCookiesToResponse({ res, payload, refreshToken });
   // check for existing token
 
 
-  const safeUser ={
-    name:user.name,
-    email:user.email,
-    role:user.role,
-    verified :user.isVerified
+  const safeUser = {
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    verified: user.isVerified,
+    id: user.id
   }
   return safeUser
 }
