@@ -30,8 +30,7 @@ export async function registerServices(user: RegisterTypes) {
   //   10000 + Math.random() * 900000
   // ).toString();
 
-
-  const verificationToken = generateToken()
+  const verificationToken = generateToken();
 
   const newUser = await prisma.user.create({
     data: {
@@ -62,7 +61,9 @@ export async function verifyUserTokenServices({
   token,
   email,
 }: VerifyUserTokenTypes) {
-  const user = await prisma.user.findFirst({ where: { verificationToken: token } });
+  const user = await prisma.user.findFirst({
+    where: { verificationToken: token },
+  });
 
   if (!user) {
     throw new BadRequestError("No user found");
@@ -72,30 +73,25 @@ export async function verifyUserTokenServices({
     throw new BadRequestError("Invalid verification Token");
   }
 
-
   let updateData: any = {
     isVerified: true,
-    verificationToken: null
-  }
+    verificationToken: null,
+  };
 
   if (user.pendingEmail) {
-    updateData.email = user.pendingEmail,
-      updateData.pendingEmail = null
+    ((updateData.email = user.pendingEmail), (updateData.pendingEmail = null));
   }
-
-
-
 
   await prisma.user.update({
     where: { email: user.email },
-    data: updateData
+    data: updateData,
   });
 }
 
 export async function loginServices({
   email,
   password,
-  res
+  res,
 }: {
   email: string;
   password: string;
@@ -121,18 +117,17 @@ export async function loginServices({
     role: user.role,
     userId: user.id,
     name: user.name,
-    email: user.email
+    email: user.email,
   };
 
   // check if there is a valid refresh token for this user
   const existingToken = await prisma.token.findFirst({
     where: {
       userId: user.id,
-      expiresAt: { gt: new Date() }
-    }
-
-  })
-  let refreshToken = existingToken?.refreshToken
+      expiresAt: { gt: new Date() },
+    },
+  });
+  let refreshToken = existingToken?.refreshToken;
 
   if (!refreshToken) {
     refreshToken = crypto.randomBytes(32).toString("hex");
@@ -143,25 +138,19 @@ export async function loginServices({
         expiresAt: addDays(new Date(), 7),
       },
     });
-
   }
-
-
-
-
 
   attachCookiesToResponse({ res, payload, refreshToken });
   // check for existing token
-
 
   const safeUser = {
     name: user.name,
     email: user.email,
     role: user.role,
     verified: user.isVerified,
-    id: user.id
-  }
-  return safeUser
+    id: user.id,
+  };
+  return safeUser;
 }
 
 export async function refreshTokenServices(
@@ -187,7 +176,7 @@ export async function refreshTokenServices(
     userId: getRefreshToken.userId,
     role: getRefreshToken.user.role,
     name: getRefreshToken.user.name,
-    email: getRefreshToken.user.email
+    email: getRefreshToken.user.email,
   };
   const newRefreshToken = crypto.randomBytes(32).toString("hex");
 

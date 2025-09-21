@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import { Request, response, Response } from "express";
 import { UserPayloadTypes } from "../../interface/auth";
 import { BadRequestError, unAuthenticated } from "../errors/customerErrors";
-import { deleteUserService, getAllUsers, getCurrentUser, updateUserService } from "../services/user.service";
+import { deleteUserService, getAllUsers, getCurrentUser, getSingleUserServices, updateUserService } from "../services/user.service";
 import { StatusCodes } from "http-status-codes";
 
 interface CustomRequest extends Request {
@@ -59,4 +59,14 @@ export async function deleteUserController(req: CustomRequest, res: Response) {
 
   res.status(StatusCodes.OK).json({ message: 'User deleted successfully', data: deletedUser })
 
+}
+
+export async function getSingleUserController (req:Request,res:Response){
+  const {id} =req.params
+  if(!id){
+    throw new BadRequestError('Please provide a valid Id')
+  }
+
+  const user = await getSingleUserServices(id)
+  res.status(StatusCodes.OK).json({ message: 'User retrieved successfully', data: user })
 }

@@ -6,6 +6,7 @@ import { handleEmailService } from "../config/email";
 import { VERIFICATION_EMAIL_TEMPLATE } from "../config/emailTemplate";
 
 const prisma = new PrismaClient();
+
 export async function getCurrentUser(userId: string) {
     const user = await prisma.user.findUnique({
         where: { id: userId },
@@ -24,6 +25,9 @@ export async function getCurrentUser(userId: string) {
                     product: true,
                 },
             },
+            Address: true,
+            Review: true
+
         },
     });
     if (!user) {
@@ -105,9 +109,37 @@ export async function deleteUserService(userId: string) {
         throw new BadRequestError('No User found')
     }
 
-    const deletedUser = await prisma.user.delete({
-        where: { id: user.id },
+    // await prisma.token.delete({ where: { id: user.id } });
+    // await prisma.order.delete({ where: { id: user.id }, });
+    // await prisma.review.delete({ where: { id: user.id } });
+    // await prisma.cartItem.delete({ where: { id: user.id } });
+    // await prisma.address.delete({ where: { id: user.id } });
+
+
+
+    // const deletedUser = await prisma.user.delete({
+    //     where: { id: user.id },
+    // })
+
+    await prisma.$transaction([
+        prisma.token.deleteMany({ where: { userId } }),
+        prisma.order.deleteMany({ where: { userId } }),
+        prisma.review.deleteMany({ where: { userId } }),
+        prisma.cartItem.deleteMany({ where: { userId } }),
+        prisma.address.deleteMany({ where: { userId } }),
+    ]);
+
+    const deletedUser = await prisma.user.delete({ where: { id: userId } })
+    return deletedUser
+}
+export async function getSingleUserServices(userId: string) {
+    const user = await prisma.user.findUnique({
+        where: { id: userId }
     })
 
-    return deletedUser
+
+    if (!user) {
+        throw new BadRequestError(`No user found with this id ${userId}`)
+    }
+    return user
 }
